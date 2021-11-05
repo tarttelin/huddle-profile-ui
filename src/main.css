@@ -11,6 +11,7 @@
         "main main main"
         "foot foot foot";
     row-gap: 2px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .main {
@@ -19,5 +20,6 @@
 
 .footer {
     grid-area: foot;
-    background-color:  lightgreen;
+    background-color:  rgb(4, 80, 4);
 }
+
