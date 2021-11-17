@@ -1,0 +1,14 @@
+overwrite: true
+schema: "schema.graphql"
+generates:
+
+  src/generated/graphql.tsx:
+    documents: "src/*/graphql/*.ts"
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
+      - "urql-introspection"
+    config:
+      avoidOptionals: true
+      nonOptionalTypename: true

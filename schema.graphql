@@ -1,0 +1,243 @@
+
+type Mutation {
+
+    # Consultant
+    createConsultant(input: CreateConsultantInput!): Consultant!
+    @aws_cognito_user_pools(cognito_groups: ["Admin"])
+    sendInvite(input: InviteUser!): Invite!
+    @aws_cognito_user_pools(cognito_groups: ["Admin"])
+    updateConsultantName(input: UpdateConsultantNameInput!): Consultant!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    updateConsultantContacts(input: UpdateConsultantContactsInput!): Consultant!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    changeConsultantEmploymentStatus(input: UpdateConsultantIsPermanentStaff!): Consultant!
+    @aws_cognito_user_pools(cognito_groups: ["Admin"])
+    createAssociateCompany(input: CreateAssociateCompanyInput!): CompanyInfo!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    updateAssociateCompany(input: UpdateAssociateCompanyInput!): CompanyInfo!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    updateAssociateCompanyBankAccount(input: UpdateAssociateCompanyBankAccountInput!): CompanyInfo!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    addStatementOfWork(input: AddStatementOfWorkInput!): CompanyInfo!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    deleteStatementOfWork(input: DeleteStatementOfWorkInput!): CompanyInfo!
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])  
+}
+
+type Query {
+    allConsultants(limit: Int, nextToken: String): ConsultantConnection
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])
+    consultantByEmail(email: String!): Consultant
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Consultant"])  @aws_iam
+    consultantById(consultantId: ID!): Consultant
+    @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam
+    userById(userId: ID!): User!
+    @aws_iam
+    me(cacheBust: String): User!
+    @aws_cognito_user_pools(cognito_groups: ["Consultant"])
+}
+
+interface Node {
+    id: ID!
+}
+
+input CreateConsultantInput {
+    fullName: ConsultantNameInput!
+    contacts: ConsultantContactsInput!
+    isPermanentStaff: Boolean
+}
+
+input InviteUser {
+    inviteEmail: String!
+    consultantId: ID!
+}
+
+input UpdateConsultantContactsInput {
+    consultantId: ID!
+    consultantEmail: String
+    personalEmail: String
+    slackUser: String
+    githubUser: String
+    mobilePhone: String
+    address: String
+}
+
+input UpdateConsultantIsPermanentStaff {
+    consultantId: ID!
+    isPermanentStaff: Boolean!
+}
+
+input UpdateConsultantNameInput {
+    consultantId: ID!
+    firstName: String
+    lastName: String
+}
+
+input CreateAssociateCompanyInput {
+    consultantId: ID!
+    name: String!
+    vatNumber: String
+    companyEmailAddress: String
+    companyAddress: String
+}
+
+input UpdateAssociateCompanyInput {
+    consultantId: ID!
+    name: String!
+    vatNumber: String
+    companyEmailAddress: String
+    companyAddress: String
+}
+
+input UpdateAssociateCompanyBankAccountInput {
+    consultantId: ID!
+    accountName: String!
+    sortCode: String!
+    accountNumber: String!
+}
+
+input AddStatementOfWorkInput {
+    consultantId: ID!
+    startDate: String!
+    endDate: String!
+    rate: RateInput!
+}
+
+input DeleteStatementOfWorkInput {
+    consultantId: ID!
+    index: Int
+}
+
+enum Currency {
+    GBP,
+    AUD,
+    USD
+}
+
+input RateInput {
+    currency: Currency!
+    unitRate: Float!
+    unit: BillingUnit!
+    taxRate: Float!
+}
+
+input ConsultantNameInput {
+    firstName: String!
+    lastName: String!
+}
+
+input ConsultantContactsInput {
+    consultantEmail: String!
+    personalEmail: String
+    slackUser: String
+    githubUser: String
+}
+
+input AddressInput {
+    street: String!
+}
+
+
+type Address {
+    street: String!
+}
+
+type PermanentStaff implements Consultant & Node @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    id: ID!,
+    fullName: Name!
+    contacts: Contacts!
+    users: [UserConnection!]
+}
+
+type AssociateConsultant implements Consultant & Node @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    id: ID!,
+    fullName: Name!
+    contacts: Contacts!
+    users: [UserConnection!]
+    companyInfo: CompanyInfo
+}
+
+type User @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    id: ID!
+    consultant: Consultant!
+    email: String!
+    username: String
+}
+
+type UserConnection  @aws_cognito_user_pools(cognito_groups: ["Admin"]) {
+    items: [User!]!
+    nextToken: String
+}
+
+interface Consultant {
+    id: ID!,
+    fullName: Name!
+    contacts: Contacts!
+    users: [UserConnection!]
+}
+
+type Name @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    firstName: String!
+    lastName: String!
+}
+
+type Contacts @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    consultantEmail: String
+    personalEmail: String
+    slackUser: String
+    githubUser: String
+    mobilePhone: String
+    address: String
+}
+
+type Invite @aws_cognito_user_pools(cognito_groups: ["Admin"]) {
+    id: ID!
+    inviteEmail: String!
+    consultantId: ID!
+    expiryTime: Int!
+}
+
+type CompanyInfo @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    id: ID!
+    name: String!
+    vatNumber: String
+    companyEmailAddress: String
+    companyAddress: String
+    bankAccount: AssociateCompanyBankAccount
+    statementsOfWork: [StatementOfWork!]!
+}
+
+type StatementOfWork @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam  {
+    startDate: String
+    endDate: String
+    rate: Rate
+}
+
+enum BillingUnit {
+    Day,
+    Hour
+}
+
+type Rate @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    currency: String!
+    unitRate: Float!
+    unit: BillingUnit!
+    taxRate: Float!
+}
+
+type AssociateCompanyBankAccount @aws_cognito_user_pools(cognito_groups: ["Admin", "Finance", "Consultant"])  @aws_iam {
+    accountName: String!
+    sortCode: String!
+    accountNumber: String!
+}
+
+type ConsultantConnection {
+    items: [Consultant!]!
+    nextToken: String
+}
+
+
+schema {
+    query: Query
+    mutation: Mutation
+}
