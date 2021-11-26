@@ -3,7 +3,7 @@ import {CONSULTANT_FRAGMENT} from "./index";
 
 
 export const Query = gql`
-    query LoadConsultant {
+    query MyProfile {
         me {
             consultant {
                 ...ConsultantProfile

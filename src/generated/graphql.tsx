@@ -325,10 +325,10 @@ export type UserConnection = {
   nextToken: Maybe<Scalars['String']>;
 };
 
-export type LoadConsultantQueryVariables = Exact<{ [key: string]: never; }>;
+export type MyProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoadConsultantQuery = { __typename: 'Query', me: { __typename: 'User', consultant: { __typename: 'AssociateConsultant', id: string, companyInfo: { __typename: 'CompanyInfo', id: string, name: string, vatNumber: string | null, companyEmailAddress: string | null, companyAddress: string | null, bankAccount: { __typename: 'AssociateCompanyBankAccount', accountName: string, accountNumber: string, sortCode: string } | null, statementsOfWork: Array<{ __typename: 'StatementOfWork', startDate: string | null, endDate: string | null, rate: { __typename: 'Rate', currency: string, unitRate: number, unit: BillingUnit, taxRate: number } | null }> } | null, fullName: { __typename: 'Name', firstName: string, lastName: string }, contacts: { __typename: 'Contacts', address: string | null, consultantEmail: string | null, githubUser: string | null, mobilePhone: string | null, personalEmail: string | null, slackUser: string | null } } | { __typename: 'PermanentStaff', id: string, fullName: { __typename: 'Name', firstName: string, lastName: string }, contacts: { __typename: 'Contacts', address: string | null, consultantEmail: string | null, githubUser: string | null, mobilePhone: string | null, personalEmail: string | null, slackUser: string | null } } } };
+export type MyProfileQuery = { __typename: 'Query', me: { __typename: 'User', consultant: { __typename: 'AssociateConsultant', id: string, companyInfo: { __typename: 'CompanyInfo', id: string, name: string, vatNumber: string | null, companyEmailAddress: string | null, companyAddress: string | null, bankAccount: { __typename: 'AssociateCompanyBankAccount', accountName: string, accountNumber: string, sortCode: string } | null, statementsOfWork: Array<{ __typename: 'StatementOfWork', startDate: string | null, endDate: string | null, rate: { __typename: 'Rate', currency: string, unitRate: number, unit: BillingUnit, taxRate: number } | null }> } | null, fullName: { __typename: 'Name', firstName: string, lastName: string }, contacts: { __typename: 'Contacts', address: string | null, consultantEmail: string | null, githubUser: string | null, mobilePhone: string | null, personalEmail: string | null, slackUser: string | null } } | { __typename: 'PermanentStaff', id: string, fullName: { __typename: 'Name', firstName: string, lastName: string }, contacts: { __typename: 'Contacts', address: string | null, consultantEmail: string | null, githubUser: string | null, mobilePhone: string | null, personalEmail: string | null, slackUser: string | null } } } };
 
 export type AssociateCompanyFragment = { __typename: 'CompanyInfo', id: string, name: string, vatNumber: string | null, companyEmailAddress: string | null, companyAddress: string | null, bankAccount: { __typename: 'AssociateCompanyBankAccount', accountName: string, accountNumber: string, sortCode: string } | null, statementsOfWork: Array<{ __typename: 'StatementOfWork', startDate: string | null, endDate: string | null, rate: { __typename: 'Rate', currency: string, unitRate: number, unit: BillingUnit, taxRate: number } | null }> };
 
@@ -385,8 +385,8 @@ export const ConsultantProfileFragmentDoc = gql`
   }
 }
     ${AssociateCompanyFragmentDoc}`;
-export const LoadConsultantDocument = gql`
-    query LoadConsultant {
+export const MyProfileDocument = gql`
+    query MyProfile {
   me {
     consultant {
       ...ConsultantProfile
@@ -395,8 +395,8 @@ export const LoadConsultantDocument = gql`
 }
     ${ConsultantProfileFragmentDoc}`;
 
-export function useLoadConsultantQuery(options: Omit<Urql.UseQueryArgs<LoadConsultantQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<LoadConsultantQuery>({ query: LoadConsultantDocument, ...options });
+export function useMyProfileQuery(options: Omit<Urql.UseQueryArgs<MyProfileQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MyProfileQuery>({ query: MyProfileDocument, ...options });
 };
 import { IntrospectionQuery } from 'graphql';
 export default {

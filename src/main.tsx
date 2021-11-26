@@ -9,7 +9,7 @@ const client = createClient({
   fetchOptions: () => {
     const user = loadUser();
     return {
-      headers: { authorization: `Bearer ${user!!.idToken}`}
+      headers: { authorization: user!!.idToken}
     }
   }
 })
